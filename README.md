@@ -16,7 +16,7 @@ reduction. The figure shows a sanity check for distributions of embedding vector
 images that have car, food and dogs within the ROI. The embedding vectors are nicely separated in the phase space.
 
 <p align="center">
-  <img src="artifacts/embedding_distribution.png" width="1000" title="Distribution of Image Embedding Vectors">
+  <img src="python/artifacts/embedding_distribution.png" width="1000" title="Distribution of Image Embedding Vectors">
 </p>
 
 
