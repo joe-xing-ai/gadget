@@ -1,8 +1,6 @@
 import pyarrow.parquet as pq
-from dataclasses import dataclass
 import faiss
 import numpy as np
-import random
 import json
 from pathlib import Path
 
@@ -37,17 +35,6 @@ def build_index(embedding_vector):
     return index
 
 
-def random_search(path):
-    [id_to_name, name_to_id, embeddings] = read_embeddings(path)
-    index = build_index(embeddings)
-    p = random.randint(0, len(id_to_name) - 1)
-    print("id to name", id_to_name[p])
-
-    results = search(index, id_to_name, embeddings[p])
-    for e in results:
-        print(f"{e[0]:.2f} {e[1]}")
-
-
 def search(index, id_to_name, embedding, rank=5):
     """
     this is the main work-horse of the similarity based search using image embeddings
@@ -62,22 +49,3 @@ def search(index, id_to_name, embedding, rank=5):
     list_dist_index = list(zip(D[0], [id_to_name[x] for x in I[0]]))
     # Note: we start from index of 1 to get rid of the top-1 item which is the same as query key...
     return list_dist_index[1:]
-
-
-def display_picture(image_path, image_name):
-    display(Image(filename=f"{image_path}/{image_name}.jpg"))
-
-
-def display_results(image_path, results):
-    hbox = HBox(
-        [
-            VBox(
-                [
-                    widgets.Label(f"{distance:.2f} {image_name}"),
-                    widgets.Image(value=open(f"{image_path}/{image_name}.jpg", "rb").read()),
-                ]
-            )
-            for distance, image_name in results
-        ]
-    )
-    display(hbox)

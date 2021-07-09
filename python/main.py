@@ -3,7 +3,6 @@ import logging
 
 from utility.download_data import save_examples_to_folder
 from utility.inference_utility import generate_tfrecord, generate_embeddings
-from utility.embedding_search_utility import random_search, embeddings_to_numpy
 from UI.ui_controller import render
 from UI.ui_controller_embedding_distribution import visualize
 
@@ -11,16 +10,18 @@ from UI.ui_controller_embedding_distribution import visualize
 def main():
     """
     this is the main driver for several main use cases:
-    - (a) visualizing image embedding vector distributions after dimensionality reduction, this is for sanity check
+    - (a) Visualizing image embedding vector distributions after dimensionality reduction, this is for sanity check
         of the generated image embedding vectors
-        python main.py --demo_visualize
 
-    - (b) image search using similarity metrics of image embedding vectors, this serves as another sanity check
+        python main.py --demo_visualize --image_folder ./data
+
+    - (b) Image search using similarity metrics of image embedding vectors, this serves as another sanity check
+
         python main.py --demo_search
 
-    - (c) image algebra, TBD
+    - (c) Image algebra, TBD
 
-    - (d) Reinforcement Learning of DNN performance, TBD
+    - (d) Reinforcement Learning / Imitation Leaning based exploration of DNN performance, TBD
 
     :return:
     """

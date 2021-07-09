@@ -2,7 +2,6 @@ import os
 import logging
 import platform
 import tensorflow as tf
-import numpy as np
 import time
 import pyarrow.parquet as pq
 import pyarrow as pa
@@ -112,12 +111,6 @@ def list_files(images_path):
     return tf.data.Dataset.list_files(images_path + "/*", shuffle=False).cache()
 
 
-def read_data_from_files(list_ds):
-    return list_ds.map(
-        process_path, num_parallel_calls=tf.data.experimental.AUTOTUNE
-    )  # .apply(tf.data.experimental.ignore_errors())
-
-
 def images_to_embeddings(model, dataset, batch_size):
     return model.predict(dataset.batch(batch_size).map(lambda image_raw, image_name: image_raw), verbose=1)
 
@@ -127,25 +120,6 @@ def save_embeddings_ds_to_parquet(embeddings, dataset, path):
     image_names = pa.array(dataset.map(lambda image_raw, image_name: image_name).as_numpy_iterator())
     table = pa.Table.from_arrays([image_names, embeddings], ["image_name", "embedding"])
     pq.write_table(table, path)
-
-
-def compute_save_embeddings(list_ds, folder, num_shards, model, batch_size):
-    start = time.time()
-    for shard_id in range(0, num_shards):
-        shard_list = list_ds.shard(num_shards=num_shards, index=shard_id)
-        shard = read_data_from_files(shard_list)
-        embeddings = images_to_embeddings(model, shard, batch_size)
-
-        print("Shard " + str(shard_id) + " done after " + str(int(time.time() - start)) + "s")
-        save_embeddings_ds_to_parquet(embeddings, shard, folder + "/part-" + "{:03d}".format(shard_id) + ".parquet")
-        print("Shard " + str(shard_id) + " saved after " + str(int(time.time() - start)) + "s")
-    print("Total time : " + str(int(time.time() - start)))
-
-
-def run_inference_from_files(image_folder, output_folder, num_shards=10, batch_size=1000):
-    model = EfficientNetB0(weights="imagenet", include_top=False, pooling="avg")
-    list_ds = list_files(image_folder)
-    compute_save_embeddings(list_ds, output_folder, num_shards, model, batch_size)
 
 
 def generate_tfrecord(image_folder, output_folder, num_shards=10):

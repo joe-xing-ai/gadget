@@ -1,6 +1,7 @@
 import os
 import cv2 as cv
 import numpy as np
+import logging
 from efficientnet.preprocessing import center_crop_and_resize
 
 
@@ -11,14 +12,14 @@ def preprocessing(src_folder, des_folder):
                 image_file = os.path.join(root, file)
                 frame = cv.imread(image_file)
                 image = center_crop_and_resize(frame, 224).astype(np.uint8)
-                print(image.shape)
+                logging.info(image.shape)
                 path_write = os.path.join(des_folder, file)
-                print(path_write)
+                logging.info(path_write)
                 cv.imwrite(path_write, image)
 
 
 def main():
-    preprocessing("../data/images", "../data/images_new/")
+    preprocessing("../data/cars196", "../data/cars196_new/")
 
 
 if __name__ == "__main__":
