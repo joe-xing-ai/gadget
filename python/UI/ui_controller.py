@@ -3,6 +3,8 @@ import cv2 as cv
 import random
 import logging
 import numpy as np
+import imageio
+import time
 
 from utility.embedding_search_utility import read_embeddings, build_index, search
 
@@ -10,7 +12,7 @@ BLACK = (0, 0, 0)
 BLUE_BGR = (255, 0, 0)
 
 
-def render(embedding_folder, image_folder):
+def render(embedding_folder, image_folder, gif, output_path):
     top_n = 5
     n_rows = 2
     width_unit_image = 300
@@ -37,6 +39,8 @@ def render(embedding_folder, image_folder):
     logging.info("there are total %s images that have embedding vectors that has shape %s" %
                  (num_images, embeddings.shape))
 
+    images_for_gif = []
+
     while True:
         frame_aggregated = np.full((height_hybrid_image, width_hybrid_image, 3), BLACK, dtype=np.uint8)
 
@@ -59,7 +63,10 @@ def render(embedding_folder, image_folder):
             cv.putText(frame_aggregated, "Query with Key: %s" % image_file_name,
                         (x_corner_1, y_corner_1), cv.FONT_HERSHEY_SIMPLEX, 0.8, BLUE_BGR, 2)
 
+        start_time = time.time()
         results = search(index_image, id_to_name, embeddings[p], rank=top_n)
+        query_latency = time.time() - start_time
+        query_latency *= 1000.  # in units of ms
 
         for index, e in enumerate(results):
             dist, image_name = e
@@ -81,7 +88,14 @@ def render(embedding_folder, image_folder):
         cv.putText(frame_aggregated, "Query results:", (x_corner_2, y_corner_2), cv.FONT_HERSHEY_SIMPLEX,
                    0.8, BLUE_BGR, 2)
 
+        cv.putText(frame_aggregated, "Query latency: %.1f [ms]" % query_latency,
+                   (width_hybrid_image - 2 * width_unit_image, y_corner_2),
+                   cv.FONT_HERSHEY_SIMPLEX, 0.8, BLUE_BGR, 2)
+
         cv.imshow(window_name, frame_aggregated)
+
+        if gif:
+            images_for_gif.append(cv.cvtColor(frame_aggregated, cv.COLOR_BGR2RGB))
 
         key = cv.waitKey(0)
 
@@ -91,3 +105,7 @@ def render(embedding_folder, image_folder):
 
         elif key & 0xFF == ord('n'):
             continue
+
+    if gif:
+        imageio.mimsave(os.path.join(output_path, 'image_search.gif'),
+                        images_for_gif, duration=1.0)

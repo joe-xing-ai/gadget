@@ -41,7 +41,11 @@ For now we only support Ubuntu and Windows 10 OS
 
 These initialization procedures will start to download Tensorflow standard datasets.
 
-### QA System - Sanity Checks, Qualitative & Quantitative Measurements of the Model Performance
+### Experimental Setup
+
+We utilize sample data provided by Tensorflow Datasets (https://www.tensorflow.org/datasets) such as car images,
+food, dog images, etc. On this particular example below, we have ~8000 images of various types of cars, another
+~1000 images for food, dog specifically as control samples.
 
 #### (a) Distribution of Image Embedding Vectors
 
