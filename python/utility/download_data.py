@@ -10,36 +10,8 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 import logging
 
-LOGGER = logging.getLogger(__name__)
-
 
 def save_examples(ds_info, ds, num_examples=10, folder=".", image_key=None):
-    """Save images from an image classification dataset.
-
-  Only works with datasets that have 1 image feature and optionally 1 label
-  feature (both inferred from `ds_info`). Note the dataset should be unbatched.
-
-  Usage:
-
-  ```python
-  ds, ds_info = tfds.load('cifar10', split='train', with_info=True)
-  fig = save_examples(ds_info, ds)
-  ```
-
-  Args:
-    ds_info: The dataset info object to which extract the label and features
-      info. Available either through `tfds.load('mnist', with_info=True)` or
-      `tfds.builder('mnist').info`
-    ds: `tf.data.Dataset`. The tf.data.Dataset object to visualize. Examples
-      should not be batched.
-    num_examples: `int`. Number of examples to save
-    folder: `str`. Where to save images
-    image_key: `string`, name of the feature that contains the image. If not
-       set, the system will try to auto-detect it.
-
-  Returns:
-  """
-
     if not image_key:
         # Infer the image and label keys
         image_keys = [k for k, feature in ds_info.features.items() if isinstance(feature, features_lib.Image)]
@@ -90,13 +62,10 @@ def save_examples(ds_info, ds, num_examples=10, folder=".", image_key=None):
             label_str = ds_info.features[label_key].int2str(label).replace("/", "_")
         else:
             label_str = ""
-        im.save(f"{folder}/image_{label_str}_{i}.jpeg")
+        im.save(f"{folder}/image_{label_str}_{i}.jpg")
 
 
-def save_examples_to_folder(output_folder, images_count=1000, dataset="tf_flowers"):
-    logging.basicConfig(level=logging.INFO)
-    logging.getLogger("tensorflow").handlers = []
-
+def save_examples_to_folder(output_folder, dataset, images_count):
     ds, ds_info = tfds.load(dataset, split="train", with_info=True)
     Path(output_folder).mkdir(parents=True, exist_ok=True)
 
@@ -104,7 +73,7 @@ def save_examples_to_folder(output_folder, images_count=1000, dataset="tf_flower
 
 
 def main():
-    save_examples_to_folder("../data/")
+    save_examples_to_folder("../data/images/", "cars196", 1000)
 
 
 if __name__ == "__main__":

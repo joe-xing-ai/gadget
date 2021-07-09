@@ -1,10 +1,13 @@
+import os
+import logging
+import platform
 import tensorflow as tf
 import numpy as np
 import time
-from efficientnet.tfkeras import EfficientNetB0
 import pyarrow.parquet as pq
 import pyarrow as pa
 from pathlib import Path
+from efficientnet.tfkeras import EfficientNetB0
 
 
 def _int64_feature(value):
@@ -31,26 +34,32 @@ def tf_serialize_example(image, image_name):
     return tf.reshape(tf_string, ())
 
 
-def process_path(file_path):
-    parts = tf.strings.split(file_path, "/")
+def map_image_file_name(file_path):
+    # TODO for now only assume Linux and Windows are supported...
+    os_name = platform.system()
+    if "Windows" in os_name:
+        parts = tf.strings.split(file_path, "\\")
+    else:
+        parts = tf.strings.split(file_path, "/")
     image_name = tf.strings.split(parts[-1], ".")[0]
     raw = tf.io.read_file(file_path)
     return raw, image_name
 
 
-def read_image_file_write_tfrecord(files_ds, output_filename):
-    image_ds = files_ds.map(process_path, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+def write_to_tfrecord_file(shard_dataset, output_filename):
+    image_ds = shard_dataset.map(map_image_file_name, num_parallel_calls=tf.data.experimental.AUTOTUNE)
     serialized_features_dataset = image_ds.map(tf_serialize_example, num_parallel_calls=tf.data.experimental.AUTOTUNE)
     writer = tf.data.experimental.TFRecordWriter(output_filename)
     writer.write(serialized_features_dataset)
 
 
-def image_files_to_tfrecords(list_ds, output_folder, num_shard):
-    start = time.time()
+def image_files_to_tfrecords(dataset, output_folder, num_shard):
+    start_time = time.time()
     for shard_id in range(0, num_shard):
-        shard_list = list_ds.shard(num_shards=num_shard, index=shard_id)
-        read_image_file_write_tfrecord(shard_list, output_folder + "/part-" + "{:03d}".format(shard_id) + ".tfrecord")
-        print("Shard " + str(shard_id) + " saved after " + str(int(time.time() - start)) + "s")
+        shard_dataset = dataset.shard(num_shards=num_shard, index=shard_id)
+        tfrecord_file_path = os.path.join(output_folder, "part-%03d.tfrecord" % shard_id)
+        write_to_tfrecord_file(shard_dataset, tfrecord_file_path)
+        logging.info("Shard %s processing takes %.1f s" % (shard_id, time.time() - start_time))
 
 
 feature_description = {
@@ -82,32 +91,25 @@ def read_tfrecord(filename):
     )
 
 
-def tfrecords_to_write_embeddings(tfrecords_folder, output_folder, model, batch_size):
-    tfrecords = [
-        f.numpy().decode("utf-8") for f in tf.data.Dataset.list_files(tfrecords_folder + "/*.tfrecord", shuffle=False)
-    ]
-    start = time.time()
+def tfrecords_to_embeddings(tfrecords_folder, output_folder, model, batch_size):
+    tfrecords = [f.numpy().decode("utf-8")
+                 for f in tf.data.Dataset.list_files(os.path.join(tfrecords_folder, "*.tfrecord"), shuffle=False)]
+
+    start_time = time.time()
     for shard_id, tfrecord in enumerate(tfrecords):
         shard = read_tfrecord(tfrecord)
         embeddings = images_to_embeddings(model, shard, batch_size)
-        print("")
-        print("Shard " + str(shard_id) + " done after " + str(int(time.time() - start)) + "s")
-        save_embeddings_ds_to_parquet(
-            embeddings, shard, output_folder + "/part-" + "{:03d}".format(shard_id) + ".parquet"
-        )
-        print("Shard " + str(shard_id) + " saved after " + str(int(time.time() - start)) + "s")
+
+        logging.info("Shard %s computing image embedding takes %.1f s" % (shard_id, time.time() - start_time))
+
+        parquet_file_path = os.path.join(output_folder, "part-%03d.parquet" % shard_id)
+        save_embeddings_ds_to_parquet(embeddings, shard, parquet_file_path)
+
+        logging.info("Shard %s saving embedding takes %.1f s" % (shard_id, time.time() - start_time))
 
 
 def list_files(images_path):
-    print("joe", images_path)
     return tf.data.Dataset.list_files(images_path + "/*", shuffle=False).cache()
-
-
-def process_path(file_path):
-    parts = tf.strings.split(file_path, "/")
-    image_name = tf.strings.split(parts[-1], ".")[0]
-    raw = tf.io.read_file(file_path)
-    return raw, image_name
 
 
 def read_data_from_files(list_ds):
@@ -133,6 +135,7 @@ def compute_save_embeddings(list_ds, folder, num_shards, model, batch_size):
         shard_list = list_ds.shard(num_shards=num_shards, index=shard_id)
         shard = read_data_from_files(shard_list)
         embeddings = images_to_embeddings(model, shard, batch_size)
+
         print("Shard " + str(shard_id) + " done after " + str(int(time.time() - start)) + "s")
         save_embeddings_ds_to_parquet(embeddings, shard, folder + "/part-" + "{:03d}".format(shard_id) + ".parquet")
         print("Shard " + str(shard_id) + " saved after " + str(int(time.time() - start)) + "s")
@@ -145,20 +148,20 @@ def run_inference_from_files(image_folder, output_folder, num_shards=10, batch_s
     compute_save_embeddings(list_ds, output_folder, num_shards, model, batch_size)
 
 
-def write_tfrecord(image_folder, output_folder, num_shards=10):
+def generate_tfrecord(image_folder, output_folder, num_shards=10):
     Path(output_folder).mkdir(parents=True, exist_ok=True)
-    list_ds = list_files(image_folder)
-    image_files_to_tfrecords(list_ds, output_folder, num_shards)
+    cached_dataset = list_files(image_folder)
+    image_files_to_tfrecords(cached_dataset, output_folder, num_shards)
 
 
-def run_inference(tfrecords_folder, output_folder, batch_size=1000):
+def generate_embeddings(tfrecords_folder, output_folder, batch_size=1000):
     Path(output_folder).mkdir(parents=True, exist_ok=True)
     model = EfficientNetB0(weights="imagenet", include_top=False, pooling="avg")
-    tfrecords_to_write_embeddings(tfrecords_folder, output_folder, model, batch_size)
+    tfrecords_to_embeddings(tfrecords_folder, output_folder, model, batch_size)
 
 
 def main():
-    write_tfrecord("../data", "../tmp/")
+    generate_tfrecord("../data/images/", "../data/tfrecords/")
 
 
 if __name__ == "__main__":
