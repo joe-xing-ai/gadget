@@ -1,28 +1,32 @@
 
 ## Project Gadget
 
-Gadget is an Image Embedding Based Search & Data-centric AI Exploration Engine with the primary focus
-being proactively explore and look for Small / Smart Data that makes your DNN model stand out.
+Gadget is an Image Embedding Based Active Learning Engine with the primary focus being proactively explore and look 
+for Most Informative Data (usually small and smart data) that makes your DNN model stand out.
 
-Image embedding vectors are the crucial pieces of fundamental elements throughout the whole system design.
-We will try to use various DNN frameworks (Image Classification, EfficientNet, Vision Transformer),
-Object Detection, Instance Segmentation, maskRCNN, etc.) to study embedding vectors.
+Image embedding vectors are the crucial pieces of fundamental elements throughout the whole design. We will try to use
+various DNN frameworks (Image Classification, EfficientNet, Vision Transformer), Object Detection, Instance 
+Segmentation, maskRCNN, etc.) to study embedding vectors.
 
 #### Author: joe.xing.ai@gmail.com
 
 ### Design
 
-The main idea behind this design is try to train an Agent (Reinforcement Learning, Imitation Learning,
-or other Heuristic based) that explores and exploits the image embedding space, thus try to determine the
-value of a particular embedding vector state with the associated policy to reach such state. That value function
-and policy function can be used to improve DNN model performance through providing Small / Smart Data to the model.
+The main idea behind this Active Learning framework is to train an Agent (Reinforcement Learning, Imitation Learning, 
+or other Heuristic based) that explores and exploits the image embedding space of general data, thus try to determine 
+the value of a particular embedding vector state with the associated policy to select such most informative data.
 
 Here the embedding vector could be time-dependent, and used to compose behavioral embedding, e.g. U-turn embedding
-with a few frames of images showing the car's movement and pose within the image.
+with a few frames of images showing the car's movement and pose within the image. A policy function could essentially
+be learned to select Most Informative Behaviors as well.
 
-The model architect:
+#### The Model Architect:
 
-The system architect:
+<p align="center">
+  <img src="python/artifacts/model_architecture.png" width="1000" title="Model Architecture">
+</p>
+
+#### The System Architect:
 
 ### Setup
 
@@ -53,6 +57,7 @@ behaviors in phase space. We take 3 classes of image data from the Tensorflow st
 
 
 #### (b) Image Search Results
+
 
 ### Deployment
 
