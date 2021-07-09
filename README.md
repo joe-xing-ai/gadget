@@ -62,6 +62,9 @@ behaviors in phase space. We take 3 classes of image data from the Tensorflow st
 
 #### (b) Image Search Results
 
+<p align="center">
+  <img src="python/artifacts/image_search.gif" width="1000" title="Image Search">
+</p>
 
 ### Deployment
 
