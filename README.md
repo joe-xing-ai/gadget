@@ -62,8 +62,15 @@ behaviors in phase space. We take 3 classes of image data from the Tensorflow st
 
 #### (b) Image Search Results
 
+Here below we demonstrate using the image embedding vector to perform image search, where the top row has the "query"
+or "probe" image while the bottom row shows the Top-5 matches ranked from high to low similarity from left to right.
+
 <p align="center">
   <img src="python/artifacts/image_search.gif" width="1000" title="Image Search">
+</p>
+
+<p align="center">
+  <img src="python/artifacts/image_search_long.gif" width="1000" title="Image Search Another Example">
 </p>
 
 ### Deployment

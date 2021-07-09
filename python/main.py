@@ -38,6 +38,7 @@ def main():
     parser.add_option('--demo_search', action="store_true", default=False, help=None)
     parser.add_option('--gif', action="store_true", default=False, help=None)
     parser.add_option('--gif_folder', action="store", default="./artifacts/", help=None)
+    parser.add_option('--gif_name', action="store", default="image_search", help=None)
     parser.add_option('--demo_visualize', action="store_true", default=False, help=None)
 
     options, args = parser.parse_args()
@@ -52,7 +53,7 @@ def main():
     elif options.demo_visualize:
         visualize(options.embedding_folder, options.image_folder)
     elif options.demo_search:
-        render(options.embedding_folder, options.image_folder, options.gif, options.gif_folder)
+        render(options.embedding_folder, options.image_folder, options.gif, options.gif_folder, options.gif_name)
 
 
 if __name__ == '__main__':

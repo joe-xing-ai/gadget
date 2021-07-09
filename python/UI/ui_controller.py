@@ -12,7 +12,7 @@ BLACK = (0, 0, 0)
 BLUE_BGR = (255, 0, 0)
 
 
-def render(embedding_folder, image_folder, gif, output_path):
+def render(embedding_folder, image_folder, gif, output_path, gif_name):
     top_n = 5
     n_rows = 2
     width_unit_image = 300
@@ -107,5 +107,5 @@ def render(embedding_folder, image_folder, gif, output_path):
             continue
 
     if gif:
-        imageio.mimsave(os.path.join(output_path, 'image_search.gif'),
+        imageio.mimsave(os.path.join(output_path, '%s.gif' % gif_name),
                         images_for_gif, duration=1.0)
