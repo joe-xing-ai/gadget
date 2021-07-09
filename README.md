@@ -20,13 +20,15 @@ Here the embedding vector could be time-dependent, and used to compose behaviora
 with a few frames of images showing the car's movement and pose within the image. A policy function could essentially
 be learned to select Most Informative Behaviors as well.
 
-#### The Model Architect:
+#### The Model Architecture:
 
 <p align="center">
   <img src="python/artifacts/model_architecture.png" width="1000" title="Model Architecture">
 </p>
 
-#### The System Architect:
+#### The System Architecture:
+
+Define the system input data pipeline, model deployment CICD, reinforcement signal collection system, etc. TBD
 
 ### Setup
 
@@ -74,4 +76,6 @@ or "probe" image while the bottom row shows the Top-5 matches ranked from high t
 </p>
 
 ### Deployment
+
+Docker-based micro-service, TBD
 
