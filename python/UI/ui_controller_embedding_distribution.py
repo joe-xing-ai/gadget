@@ -1,6 +1,4 @@
 import os
-import cv2 as cv
-import random
 import logging
 import numpy as np
 import matplotlib.pyplot as plt
