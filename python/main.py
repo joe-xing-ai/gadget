@@ -5,6 +5,7 @@ from utility.download_data import save_examples_to_folder
 from utility.inference_utility import generate_tfrecord, generate_embeddings
 from UI.ui_controller import render
 from UI.ui_controller_embedding_distribution import visualize
+from train_rl import train
 
 
 def main():
@@ -26,20 +27,22 @@ def main():
     :return:
     """
     parser = optparse.OptionParser()
-    parser.add_option("--image_folder", action="store", default="./data/images", help="Folder for tfrecords")
+    parser.add_option("--image_folder", action="store", default="./data/images", help="Folder for raw images")
     parser.add_option("--tfrecord_folder", action="store", default="./data/tfrecords", help="Folder for tfrecords")
     parser.add_option('--embedding_folder', action="store", default="./data/embeddings", help="Folder for embeddings")
-    parser.add_option('--numpy_data_folder', action="store", default="./data/numpy_data/", help=None)
+    parser.add_option('--numpy_data_folder', action="store", default="./data/numpy_data/", help="Folder for numpy")
     parser.add_option('--download_data', action="store_true", default=False,
                       help="this helps you to download the sample dataset provided by tensorflow")
     parser.add_option('--dataset_name', action="store", default="food101", help="cars196, food101, stanford_dogs etc.")
     parser.add_option('--dataset_num_images', action="store", default=1000, help=None)
     parser.add_option('--preprocessing', action="store_true", default=False, help=None)
-    parser.add_option('--demo_search', action="store_true", default=False, help=None)
+    parser.add_option('--demo_search', action="store_true", default=False, help="Search demo, sanity check")
     parser.add_option('--gif', action="store_true", default=False, help=None)
     parser.add_option('--gif_folder', action="store", default="./artifacts/", help=None)
     parser.add_option('--gif_name', action="store", default="image_search", help=None)
-    parser.add_option('--demo_visualize', action="store_true", default=False, help=None)
+    parser.add_option('--demo_visualize', action="store_true", default=False, help="Visualize embedding vectors")
+    parser.add_option('--train_rl', action="store_true", default=False,
+                      help="Train RL agent to select MID (Most Informative Data)")
 
     options, args = parser.parse_args()
 
@@ -54,6 +57,8 @@ def main():
         visualize(options.embedding_folder, options.image_folder)
     elif options.demo_search:
         render(options.embedding_folder, options.image_folder, options.gif, options.gif_folder, options.gif_name)
+    elif options.train_rl:
+        train()
 
 
 if __name__ == '__main__':
