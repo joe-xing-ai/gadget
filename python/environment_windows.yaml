@@ -13,14 +13,15 @@ dependencies:
   - blas=1.0=mkl
   - blinker=1.4=py37haa95532_0
   - brotlipy=0.7.0=py37h2bbff1b_1003
-  - ca-certificates=2021.5.30=h5b45459_0
+  - ca-certificates=2021.7.5=haa95532_1
   - cachetools=4.2.2=pyhd3eb1b0_0
-  - certifi=2021.5.30=py37h03978a9_0
+  - certifi=2021.5.30=py37haa95532_0
   - cffi=1.14.5=py37hcd4344a_0
   - chardet=3.0.4=py37haa95532_1003
   - click=8.0.1=pyhd3eb1b0_0
   - coverage=5.5=py37h2bbff1b_2
   - cryptography=3.4.7=py37h71e12ea_0
+  - cudatoolkit=10.1.243=h74a9793_0
   - cycler=0.10.0=py_2
   - cython=0.29.23=py37hd77b12b_0
   - faiss-cpu=1.7.1=py3.7_h2272212_1_cpu
@@ -53,6 +54,7 @@ dependencies:
   - libpng=1.6.37=h2a8f88b_0
   - libprotobuf=3.14.0=h23ce68f_0
   - libtiff=4.2.0=hd0e1b90_0
+  - libuv=1.40.0=he774522_0
   - libwebp-base=1.2.0=h8ffe710_2
   - lz4-c=1.9.3=h2bbff1b_0
   - markdown=3.3.4=py37haa95532_0
@@ -62,12 +64,13 @@ dependencies:
   - mkl_fft=1.3.0=py37h46781fe_0
   - mkl_random=1.0.4=py37h343c172_0
   - multidict=5.1.0=py37h2bbff1b_2
+  - ninja=1.10.2=h6d14046_1
   - numpy=1.17.0=py37h19fb1c0_0
   - numpy-base=1.17.0=py37hc3f5095_0
   - oauthlib=3.1.0=py_0
   - olefile=0.46=py37_0
   - opencv=4.5.1=py37h03978a9_0
-  - openssl=1.1.1k=h8ffe710_0
+  - openssl=1.1.1k=h2bbff1b_0
   - opt_einsum=3.3.0=pyhd3eb1b0_1
   - pandas=1.2.4=py37hf11a4ad_0
   - pillow=8.2.0=py37h4fa10fc_0
@@ -90,6 +93,7 @@ dependencies:
   - python=3.7.3=h8c8aaf0_1
   - python-dateutil=2.8.1=pyhd3eb1b0_0
   - python_abi=3.7=2_cp37m
+  - pytorch=1.7.1=py3.7_cuda101_cudnn7_0
   - pytz=2021.1=pyhd3eb1b0_0
   - qt=5.12.9=h5909a2a_4
   - requests=2.25.1=pyhd3eb1b0_0
@@ -125,18 +129,21 @@ dependencies:
   - zstd=1.4.9=h19a0ad4_0
   - pip:
     - absl-py==0.12.0
+    - cloudpickle==1.6.0
     - colorama==0.4.4
     - dill==0.3.4
     - efficientnet==1.1.0
     - faiss==1.7.1
     - future==0.18.2
     - googleapis-common-protos==1.53.0
+    - gym==0.18.3
     - imageio==2.9.0
     - importlib-resources==5.2.0
     - joblib==1.0.1
     - matplotlib==3.4.2
     - promise==2.3
     - pyarrow==4.0.1
+    - pyglet==1.5.15
     - pywavelets==1.1.1
     - scikit-image==0.18.2
     - scikit-learn==0.24.2
