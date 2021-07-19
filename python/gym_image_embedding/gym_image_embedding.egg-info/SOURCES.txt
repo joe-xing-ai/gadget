@@ -1,0 +1,7 @@
+README.md
+setup.py
+gym_image_embedding.egg-info/PKG-INFO
+gym_image_embedding.egg-info/SOURCES.txt
+gym_image_embedding.egg-info/dependency_links.txt
+gym_image_embedding.egg-info/requires.txt
+gym_image_embedding.egg-info/top_level.txt

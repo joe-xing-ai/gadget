@@ -19,7 +19,7 @@ def preprocessing(src_folder, des_folder):
 
 
 def main():
-    preprocessing("../data/cars196", "../data/cars196_new/")
+    preprocessing(r"C:\Users\joexi\Downloads\cars196\cars_train", r"C:\Users\joexi\Downloads\cars196\cars_train_new")
 
 
 if __name__ == "__main__":

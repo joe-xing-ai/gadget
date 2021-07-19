@@ -6,6 +6,7 @@ from utility.inference_utility import generate_tfrecord, generate_embeddings
 from UI.ui_controller import render
 from UI.ui_controller_embedding_distribution import visualize
 from train_rl import train
+from train_perception import train_perception
 
 
 def main():
@@ -43,6 +44,11 @@ def main():
     parser.add_option('--demo_visualize', action="store_true", default=False, help="Visualize embedding vectors")
     parser.add_option('--train_rl', action="store_true", default=False,
                       help="Train RL agent to select MID (Most Informative Data)")
+    parser.add_option('--env_name', action="store", default="gym_image_embedding:image_embedding-v0",
+                      help="CartPole-v0 for unit-test, gym_image_embedding:image_embedding-v0 image exploration")
+    parser.add_option('--train_visualize_fps', action="store", default=10., help=None)
+    parser.add_option('--train_perception', action="store_true", default=False,
+                      help="Train the baseline perception / CNN system (model agnostic in terms of CNN)")
 
     options, args = parser.parse_args()
 
@@ -58,7 +64,9 @@ def main():
     elif options.demo_search:
         render(options.embedding_folder, options.image_folder, options.gif, options.gif_folder, options.gif_name)
     elif options.train_rl:
-        train()
+        train(options.env_name, float(options.train_visualize_fps))
+    elif options.train_perception:
+        train_perception()
 
 
 if __name__ == '__main__':

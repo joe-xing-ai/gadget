@@ -1,21 +1,21 @@
 import os
+import sys
 import numpy as np
 import logging
 import gym
 from gym import envs
 from torch.utils.tensorboard import SummaryWriter
+import cv2 as cv
 
 from agent.ppo import Agent
 
 
-def train():
-    env_name = "CartPole-v0"
-    all_envs = envs.registry.all()
-    env_ids = [env_spec.id for env_spec in all_envs]
-
-    if env_name in env_ids:
+def train(env_name, train_visualize_fps):
+    try:
         env = gym.make(env_name)
-    else:
+    except:
+        logging.warning("please try run 'pip install -e gym_image_embedding' to register the environment")
+        logging.warning("exception:", sys.exc_info())
         return
 
     n_steps_interval_learn = 20
@@ -39,12 +39,6 @@ def train():
                   input_dims=env.observation_space.shape, chkpt_dir=checkpoint_path,
                   actor_chkpt_name=actor_model_name, critic_chkpt_name=critic_model_name, tensorboard_writer=writer)
 
-    figure_path = 'plots'
-    if not os.path.exists(figure_path):
-        os.mkdir(figure_path)
-
-    figure_file = os.path.join(figure_path, 'cartpole.png')
-
     best_score = env.reward_range[0]
     score_history = []
 
@@ -59,8 +53,17 @@ def train():
         while not done:
             action, prob, val = agent.choose_action(observation)
             observation_, reward, done, info = env.step(action)
+
             if visualize:
                 env.render()
+
+                if train_visualize_fps > 0:
+                    sleep_time = int(1. / train_visualize_fps * 1000.)  # in units of ms
+                else:
+                    sleep_time = 0
+
+                key = cv.waitKey(sleep_time)
+
             n_steps += 1
             score += reward
             agent.remember(observation, action, prob, val, reward, done)
