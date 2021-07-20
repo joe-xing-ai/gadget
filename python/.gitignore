@@ -2,5 +2,7 @@
 data/
 checkpoints/
 runs/
+logs_perception_training/
+logs_rl_training/
 .idea
 *__pycache__*

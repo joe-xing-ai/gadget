@@ -19,7 +19,7 @@ def train(env_name, train_visualize_fps):
         return
 
     n_steps_interval_learn = 20
-    n_episodes = 10
+    n_episodes = 300
     visualize = True
     model_path = "checkpoints"
     actor_model_name = "model_actor"

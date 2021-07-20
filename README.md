@@ -32,7 +32,8 @@ Define the system input data pipeline, model deployment CICD, reinforcement sign
 
 ### Setup
 
-Main dependencies: conda 4.10.1, CUDA 10.1, tensorflow-gpu 2.3.0
+Main dependencies: conda 4.10.1, CUDA 10.1(2), cuDNN 7.6.4 (works with CUDA 10.2 as well), tensorflow-gpu 2.3.0,
+torch 1.7.1
 
     - conda env create --file environment_ubuntu.yaml (environment_windows.yml)
 

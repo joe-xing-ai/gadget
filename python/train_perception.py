@@ -3,6 +3,7 @@ import glob
 import logging
 import pandas as pd
 import matplotlib.pyplot as plt
+import datetime
 
 from efficientnet.tfkeras import EfficientNetB0
 from efficientnet.tfkeras import center_crop_and_resize, preprocess_input
@@ -11,16 +12,21 @@ from tensorflow.keras import optimizers
 from tensorflow.keras import models, layers
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
+import tensorflow as tf
+
 from common.constants import *
 
 
-def train_perception():
+def train_perception(num_epochs):
+
+    log_dir = "./logs_perception_training/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+
     batch_size = 48
     width = EFFICIENTNET_IMAGE_SIZE
     height = EFFICIENTNET_IMAGE_SIZE
-    epochs = 5
+    epochs = num_epochs
     dropout_rate = 0.2
-    input_shape = (height, width, 3)
     list_names = LIST_CARS196_DATA_SCHEMA
 
     image_folder_train = IMAGE_FOLDER_TRAIN
@@ -101,8 +107,10 @@ def train_perception():
         validation_steps=num_test // batch_size,
         verbose=1,
         use_multiprocessing=False,
-        workers=4)
+        workers=4,
+        callbacks=[tensorboard_callback])
 
+    # TODO i don't need these monitoring below, since I switched to tensorboard
     acc = history.history['acc']
     val_acc = history.history['val_acc']
     loss = history.history['loss']

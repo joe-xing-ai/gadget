@@ -49,6 +49,7 @@ def main():
     parser.add_option('--train_visualize_fps', action="store", default=10., help=None)
     parser.add_option('--train_perception', action="store_true", default=False,
                       help="Train the baseline perception / CNN system (model agnostic in terms of CNN)")
+    parser.add_option('--epochs_train_perception', action="store", default=10, help=None)
 
     options, args = parser.parse_args()
 
@@ -66,7 +67,7 @@ def main():
     elif options.train_rl:
         train(options.env_name, float(options.train_visualize_fps))
     elif options.train_perception:
-        train_perception()
+        train_perception(int(options.epochs_train_perception))
 
 
 if __name__ == '__main__':
