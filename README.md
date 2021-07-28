@@ -87,6 +87,22 @@ or "probe" image while the bottom row shows the Top-5 matches ranked from high t
   <img src="python/artifacts/image_search_long.gif" width="1000" title="Image Search Another Example">
 </p>
 
+#### (c) RL Agent Select Most Informative Data (MID) and Re-training the CNN Model
+
+An experiment is carried out using about 16, 000 car images for training and testing (almost 50-50 split)
+Credits on data preparation goes to Cars196 dataset: https://ai.stanford.edu/~jkrause/cars/car_dataset.html
+
+Here the baseline Conv. Net framework could be anything from EfficientNet, Inception, Vision Transformer, so on and so 
+forth. We are going to freeze the Conv. Net model parameters which were obtained using sort of standard training data 
+such as ImageNet data and only re-train the last layer that classifies the 196 types of cars. A baseline model
+performance is shown below where the top-1 accuracy is foreseen to converge around 70% precision with 8000 training
+images.
+
+<p align="center">
+  <img src="python/artifacts/conv_net_training.png" width="1000" title="Baseline training performance">
+</p>
+
+
 ### Deployment
 
 Docker-based micro-service, TBD
