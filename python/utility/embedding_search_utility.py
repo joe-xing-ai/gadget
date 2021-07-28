@@ -4,13 +4,21 @@ import numpy as np
 import json
 from pathlib import Path
 
+from common.constants import *
+
 
 def read_embeddings(path):
     emb_df = pq.read_table(path).to_pandas()
-    id_to_name = {k: v.decode("utf-8") for k, v in enumerate(list(emb_df["image_name"]))}
+
+    id_to_name = {k: v.decode("utf-8") for k, v in enumerate(list(emb_df[IMAGE_NAME_KEY]))}
     name_to_id = {v: k for k, v in id_to_name.items()}
+
+    id_to_sub_dir = {k: v.decode("utf-8") for k, v in enumerate(list(emb_df[IMAGE_SUB_DIR_KEY]))}
+    sub_dir_to_id = {v: k for k, v in id_to_sub_dir.items()}
+
     embgood = np.stack(emb_df["embedding"].to_numpy())
-    return id_to_name, name_to_id, embgood
+
+    return id_to_name, name_to_id, id_to_sub_dir, sub_dir_to_id, embgood
 
 
 def embeddings_to_numpy(input_path, output_path):
@@ -35,17 +43,12 @@ def build_index(embedding_vector):
     return index
 
 
-def search(index, id_to_name, embedding, rank=5):
+def search(index, id_to_name, id_to_sub_dir, embedding, rank=5):
     """
     this is the main work-horse of the similarity based search using image embeddings
-    :param index:
-    :param id_to_name:
-    :param embedding:
-    :param rank:
-    :return:
     """
     # TODO: this plus 1 operation is just for removing the top-1 item that is the same as query key...
     D, I = index.search(np.expand_dims(embedding, 0), rank + 1)  # FAISS search
-    list_dist_index = list(zip(D[0], [id_to_name[x] for x in I[0]]))
+    list_dist_index = list(zip(D[0], [(id_to_name[x], id_to_sub_dir[x]) for x in I[0]]))
     # Note: we start from index of 1 to get rid of the top-1 item which is the same as query key...
     return list_dist_index[1:]

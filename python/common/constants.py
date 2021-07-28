@@ -6,3 +6,7 @@ LABEL_FILE_PATH_TEST = r"/home/joe/Downloads/cars196/anno_test.csv"
 CLASS_NAME_PATH = r"/home/joe/Downloads/cars196/names.csv"
 EFFICIENTNET_IMAGE_SIZE = 224
 LIST_CARS196_DATA_SCHEMA = ["file_name", "top_left_x", "top_left_y", "bottom_right_x", "bottom_right_y", "class"]
+IMAGE_KEY = "image"
+IMAGE_NAME_KEY = "image_name"
+IMAGE_SUB_DIR_KEY = "image_sub_dir"
+

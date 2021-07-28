@@ -40,7 +40,14 @@ torch 1.7.1
 For now we only support Ubuntu and Windows 10 OS
 
     - conda activate gadget
-    - cd ./python/ && python main.py --download --dataset_name "food01" --image_folder "./data/food01"
+    - cd ./python/ && python main.py --download --dataset_name "food101" --image_folder "../data/food101"
+
+This will download different type of data / images in tensorflow dataset into the temporary data folder
+
+    - cd ./python/ &&    
+    
+    
+This will pre-process the image data and generate tfrecords for faster search demo
 
 These initialization procedures will start to download Tensorflow standard datasets.
 
@@ -58,6 +65,8 @@ images that have car, food and dogs within the ROI. The embedding vectors are ni
 behaviors in phase space. We take 3 classes of image data from the Tensorflow standard sample dataset, "cars196",
 "food101" and "stanford_dogs".
 
+    - python main.py --demo_visualize --image_folder ../data/images
+    
 <p align="center">
   <img src="python/artifacts/embedding_distribution.png" width="1000" title="Distribution of Image Embedding Vectors">
 </p>
@@ -67,6 +76,8 @@ behaviors in phase space. We take 3 classes of image data from the Tensorflow st
 
 Here below we demonstrate using the image embedding vector to perform image search, where the top row has the "query"
 or "probe" image while the bottom row shows the Top-5 matches ranked from high to low similarity from left to right.
+
+    - python main.py --demo_search
 
 <p align="center">
   <img src="python/artifacts/image_search.gif" width="1000" title="Image Search">

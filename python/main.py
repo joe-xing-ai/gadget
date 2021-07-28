@@ -15,7 +15,7 @@ def main():
     - (a) Visualizing image embedding vector distributions after dimensionality reduction, this is for sanity check
         of the generated image embedding vectors
 
-        python main.py --demo_visualize --image_folder ./data
+        python main.py --demo_visualize --image_folder ../data/images
 
     - (b) Image search using similarity metrics of image embedding vectors, this serves as another sanity check
 
@@ -28,10 +28,12 @@ def main():
     :return:
     """
     parser = optparse.OptionParser()
-    parser.add_option("--image_folder", action="store", default="./data/images", help="Folder for raw images")
-    parser.add_option("--tfrecord_folder", action="store", default="./data/tfrecords", help="Folder for tfrecords")
-    parser.add_option('--embedding_folder', action="store", default="./data/embeddings", help="Folder for embeddings")
-    parser.add_option('--numpy_data_folder', action="store", default="./data/numpy_data/", help="Folder for numpy")
+    parser.add_option("--image_folder", action="store", default="../data/images", help="folder for raw images, each"
+                                                                                       "type of image is a sub-folder")
+    parser.add_option("--tfrecord_folder", action="store", default="../data/preprocessed/tfrecords",
+                      help="folder for tfrecords")
+    parser.add_option('--embedding_folder', action="store", default="../data/preprocessed/embeddings",
+                      help="Folder for embeddings")
     parser.add_option('--download_data', action="store_true", default=False,
                       help="this helps you to download the sample dataset provided by tensorflow")
     parser.add_option('--dataset_name', action="store", default="food101", help="cars196, food101, stanford_dogs etc.")

@@ -11,20 +11,31 @@ BLUE_BGR = (255, 0, 0)
 
 
 def visualize(embedding_folder, image_folder):
-    dataset_names_downloaded = ["cars196", "food101", "stanford_dogs"]
+    id_to_name, name_to_id, id_to_sub_dir, sub_dir_to_id, embeddings = read_embeddings(embedding_folder)
+
+    dataset_names_downloaded = set()
+
+    for file_name, index in name_to_id.items():
+        image_sub_dir = id_to_sub_dir[index]
+        dataset_names_downloaded.add(image_sub_dir)
+
+    dataset_names_downloaded = list(dataset_names_downloaded)
+
     colors = ["green", "red", "blue"]
+
     emb_dimen_reduction = [[] for _ in range(len(dataset_names_downloaded))]
-    id_to_name, name_to_id, embeddings = read_embeddings(embedding_folder)
+
     id_to_category = {}
     embeddings_after_dimen_reduction = TSNE(n_components=3).fit_transform(embeddings)
 
     for file_name, index in name_to_id.items():
-        for index_dataset, dataset in enumerate(dataset_names_downloaded):
-            image_path = os.path.join(os.path.join(image_folder, dataset), file_name)
-            image_path = "%s.jpg" % image_path
-            if os.path.exists(image_path):
-                id_to_category[index] = index_dataset
-                emb_dimen_reduction[index_dataset].append(embeddings_after_dimen_reduction[index])
+        image_sub_dir = id_to_sub_dir[index]
+        image_path = os.path.join(os.path.join(image_folder, image_sub_dir), file_name)
+        image_path = "%s.jpg" % image_path
+        if os.path.exists(image_path):
+            index_dataset = dataset_names_downloaded.index(image_sub_dir)
+            id_to_category[index] = index_dataset
+            emb_dimen_reduction[index_dataset].append(embeddings_after_dimen_reduction[index])
 
     num_images = len(id_to_name)
     logging.info("there are total %s images that have embedding vectors that has shape %s" %

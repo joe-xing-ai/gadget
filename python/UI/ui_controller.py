@@ -33,7 +33,8 @@ def render(embedding_folder, image_folder, gif, output_path, gif_name):
     x_corner_1, y_corner_1 = 20, 40
     x_corner_2, y_corner_2 = 20, height_unit_image - 20
 
-    id_to_name, name_to_id, embeddings = read_embeddings(embedding_folder)
+    id_to_name, name_to_id, id_to_sub_dir, sub_dir_to_id, embeddings = read_embeddings(embedding_folder)
+
     index_image = build_index(embeddings)
     num_images = len(id_to_name)
     logging.info("there are total %s images that have embedding vectors that has shape %s" %
@@ -46,9 +47,12 @@ def render(embedding_folder, image_folder, gif, output_path, gif_name):
 
         p = random.randint(0,  num_images - 1)
         image_file_name = id_to_name[p]
-        logging.info("Query with key: %s" % image_file_name)
+        image_sub_dir = id_to_sub_dir[p]
 
-        image_path = os.path.join(image_folder, image_file_name)
+        logging.info("Query with key: %s under %s" % (image_file_name, image_sub_dir))
+
+        image_path = os.path.join(image_folder, image_sub_dir)
+        image_path = os.path.join(image_path, image_file_name)
         image_path = "%s.%s" % (image_path, "jpg")
 
         if os.path.exists(image_path):
@@ -60,17 +64,20 @@ def render(embedding_folder, image_folder, gif, output_path, gif_name):
             r_e = height_unit_image
             frame_aggregated[r_s:r_e, w_s:w_e] = frame_query
 
-            cv.putText(frame_aggregated, "Query with Key: %s" % image_file_name,
+            cv.putText(frame_aggregated, "Query with Key: %s under %s" % (image_file_name, image_sub_dir),
                         (x_corner_1, y_corner_1), cv.FONT_HERSHEY_SIMPLEX, 0.8, BLUE_BGR, 2)
 
         start_time = time.time()
-        results = search(index_image, id_to_name, embeddings[p], rank=top_n)
+        results = search(index_image, id_to_name, id_to_sub_dir, embeddings[p], rank=top_n)
         query_latency = time.time() - start_time
         query_latency *= 1000.  # in units of ms
 
         for index, e in enumerate(results):
-            dist, image_name = e
-            image_path_result = os.path.join(image_folder, image_name)
+            dist, image_name_sub_dir_tuple = e
+            image_name, image_sub_dir = image_name_sub_dir_tuple
+
+            image_path_result = os.path.join(image_folder, image_sub_dir)
+            image_path_result = os.path.join(image_path_result, image_name)
             image_path_result = "%s.%s" % (image_path_result, "jpg")
 
             if os.path.exists(image_path_result):
